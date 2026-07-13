@@ -44,8 +44,7 @@ figures/
   extra_*.png       Supplementary diagnostic plots
   noa_fig*.png      Figures from teammate repo
 
-Eye Project.docx         Final report (submitted)
-Eye Project BACKUP.docx  Backup of final report
+
 ```
 
 
