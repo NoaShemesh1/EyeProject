@@ -64,11 +64,3 @@ python model_sequential.py     # run Experiment 4
 **Note:** `data/ia_Paragraph.csv` (5.2 GB raw eye-tracking export) is gitignored and not included. Obtain it from the EyeBench OneStop preprocessing pipeline.
 
 ---
-
-
----
-
-## Dependencies
-
-See `environment.yml` (conda) or `docs/requirements.txt` (docs only).  
-Built on the [EyeBench](https://github.com/EyeBench/eyebench) framework (Shubi et al., NeurIPS 2025).
