@@ -1,5 +1,10 @@
 # EyeBench: Predicting Reading Comprehension from Early and Late Eye-Movement Features
 
+**Course:** Language, Computation and Cognition — Technion, Spring 2026  
+**Authors:** Asaf Grinshtein, Noa Shemesh
+
+---
+
 ## Research Question
 
 > How much predictive information is contained in early versus late eye-movement measures for reading comprehension prediction?
@@ -11,55 +16,81 @@ We investigate whether early (first-pass) vs. late (re-reading/regression) gaze 
 ## Repository Structure
 
 ```
-model.py               Experiments 1–3: LR / RF / XGB on feature-set comparison,
+create_trials.py       Builds data/trials_9718.csv from the raw EyeBench OneStop data
+eda.py                 Exploratory analysis — label distribution, feature correlations,
+                       early-vs-late feature distributions
+feature_models.py      Experiments 1–3: LR / RF / XGB on feature-set comparison,
                        permutation importance, and ablation study
-model_sequential.py    Experiment 4: BiGRU + position-aware approaches
-                       (pos_split, surp_weighted, critical_span, combined A+B+C)
-eda.py                 Core EDA — label distribution, feature correlations, EDA figures
-eda_full.py            Extended EDA — full feature sweep, extra diagnostic plots
-eda_graph.py           Second EDA pass (from teammate repo)
-eda_graph.md           Write-up of eda_graph.py findings
-create_trials.py       Builds data/trials_9718.csv and data/trials_9718_with_folds.csv
-                       from the raw EyeBench OneStop data
+sequential_models.py   Experiment 4: BiGRU + position-aware approaches
+                       (pos_split, surp_weighted, critical_span, combined A+B+C).
+                       Needs combined_ia.csv from the raw eye-tracking export, which
+                       isn't included in this repo — see note under How to Run.
 
 data/
-  trials_9718.csv              Processed dataset — 9,718 participant×question trials
-  trials_9718_with_folds.csv   Same, with 10 EyeBench CV fold assignments added
+  trials_9718_with_folds.csv   9,718 participant×question trials, with 10 EyeBench
+                               CV fold assignments already added
 
 results/
-  exp1_feature_comparison.csv  Experiment 1 — early/late/combined/text_only/combined_ling
+  exp1_feature_comparison.csv      Experiment 1 — early/late/combined/text_only/combined_ling
   exp2_permutation_importance.csv  Experiment 2 — RF permutation importance on combined
-  exp3_ablation.csv            Experiment 3 — ablation (remove one feature group at a time)
-  exp4_sequential.csv          Experiment 4 — BiGRU + positional/sequential approaches
-  results_summary.csv          Aggregated summary across experiments
-
-  noa_exp1_feature_comparison.csv  Teammate's Experiment 1 results (different format)
-  noa_exp3_ablation.csv            Teammate's Experiment 3 results
-  noa_exp4_sequential.csv          Teammate's Experiment 4 results (pos_split, surp_weighted,
-                                   critical_span, seq_enhanced, bigru) — source script missing,
-                                   see CONFLICTS below
+  exp3_ablation.csv                Experiment 3 — ablation (remove one feature group at a time)
+  exp4_sequential.csv              Experiment 4 — BiGRU / positional / sequential approaches
+  results_summary.csv              Aggregated mean/std summary across experiments
 
 figures/
-  fig1–fig8_*.png   Named report figures (used in Eye Project.docx)
-  extra_*.png       Supplementary diagnostic plots
-  noa_fig*.png      Figures from teammate repo
+  fig1_dataset_overview.png, fig2_kde_early_late.png, fig3_*.png, fig4_*.png,
+  fig5_early_vs_late_scatter.png, fig8_seq_comparison.png     Report figures
+  noa_fig1/2/4/5/6/7_*.png                                    Same analyses, second run
+  extra_01–14_*.png                                           Supplementary diagnostic plots
 
-
+environment.yml      Conda environment (recommended — see note under How to Run)
+requirements.txt     Pip alternative
+LICENSE              MIT
 ```
 
+---
 
 ## How to Run
 
 ```bash
-# Use the conda env (pip/venv xgboost breaks on macOS — missing libomp)
-conda activate eyebench   # or: /Users/asi/miniforge3/envs/eyebench/bin/python
+conda env create -f environment.yml && conda activate eyebench   # recommended
+# or: pip install -r requirements.txt
 
-python create_trials.py        # build data/trials_9718_with_folds.csv
+python create_trials.py        # build data/trials_9718.csv
 python eda.py                  # generate EDA figures
-python model.py                # run Experiments 1–3
-python model_sequential.py     # run Experiment 4
+python feature_models.py       # run Experiments 1–3 (needs data/trials_9718_with_folds.csv)
+python sequential_models.py    # run Experiment 4
 ```
 
-**Note:** `data/ia_Paragraph.csv` (5.2 GB raw eye-tracking export) is gitignored and not included. Obtain it from the EyeBench OneStop preprocessing pipeline.
+**Notes:**
+- `sequential_models.py` needs `combined_ia.csv` (raw per-word gaze features), which comes
+  from the full EyeBench OneStop preprocessing pipeline and is too large to include here.
+- xgboost via pip on macOS is known to break due to a missing `libomp` runtime; if you hit
+  that, install it via conda or `brew install libomp`.
 
 ---
+
+## Key Results (mean AUC-ROC across 10 folds)
+
+| Condition | Best Model | Unseen Reader | Unseen Text | Unseen Both |
+|-----------|-----------|:---:|:---:|:---:|
+| Random baseline | — | 0.505 | 0.507 | 0.514 |
+| text_only (linguistic) | RF | **0.638** | **0.562** | **0.595** |
+| combined_ling | LR | 0.584 | 0.570 | 0.578 |
+| combined (gaze) | LR | 0.540 | 0.542 | 0.547 |
+| early | LR | 0.527 | 0.535 | 0.545 |
+| late | LR | 0.520 | 0.527 | 0.505 |
+| Combined A+B+C (Exp 4) | LR | 0.543 | 0.540 | 0.513 |
+| BiGRU (Exp 4) | BiGRU | 0.519 | 0.519 | 0.469 |
+
+**H1** (late > early): weak, LR only — not supported.  
+**H2** (combined is best): not supported — text_only dominates.  
+**H3** (regression features most important): disproven — removing them slightly *increases* AUC.
+
+---
+
+## License
+
+MIT — see `LICENSE`.
+
+Built on the [EyeBench](https://github.com/EyeBench/eyebench) framework (Shubi et al., NeurIPS 2025).
