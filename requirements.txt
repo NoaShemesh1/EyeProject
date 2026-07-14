@@ -1,0 +1,57 @@
+# Core dependencies for running the EyeBench pipeline (data processing, models, EDA).
+# Pinned to match environment.yml (the conda environment this project was developed in).
+# Note: xgboost on macOS via pip is known to break due to a missing libomp runtime;
+# if you hit that, install it via conda/homebrew (`brew install libomp`) instead.
+
+pandas==2.2.3
+numpy==2.2.4
+scipy==1.18.0
+polars==1.42.1
+pyarrow==19.0.1
+pyyaml==6.0.2
+scikit-learn==1.6.1
+xgboost==3.0.0
+joblib==1.5.3
+
+matplotlib==3.10.1
+seaborn==0.13.2
+
+torch==2.5.1
+transformers==4.47.1
+datasets==3.5.0
+lightning==2.5.1
+torchmetrics==1.9.0
+accelerate==1.5.2
+peft==0.15.2
+pytorch-metric-learning==2.9.0
+
+hydra-core==1.3.2
+omegaconf==2.3.0
+typed-argument-parser==1.10.1
+beartype==0.20.2
+loguru==0.7.2
+tqdm==4.68.3
+requests==2.34.2
+wandb==0.23.1
+
+spacy==3.8.5
+wordfreq==3.1.1
+rdata==1.0.0
+pyreadr==0.5.6
+pymovements==0.25.0
+git+https://github.com/lacclab/text-metrics.git
+
+# spaCy language models used for surprisal/linguistic features
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+https://github.com/explosion/spacy-models/releases/download/da_core_news_sm-3.8.0/da_core_news_sm-3.8.0-py3-none-any.whl
+https://github.com/explosion/spacy-models/releases/download/de_core_news_sm-3.8.0/de_core_news_sm-3.8.0-py3-none-any.whl
+
+# Dev tools (linting, type-checking, notebooks) — optional for just running experiments
+pre-commit==4.2.0
+ruff==0.11.6
+mypy==1.15.0
+pandas-stubs==2.2.3
+types-tqdm==4.67.0
+ipykernel==6.29.5
+ipywidgets==8.1.6
+gpustat==1.1.1
