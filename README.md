@@ -70,25 +70,6 @@ python sequential_models.py    # run Experiment 4
 
 ---
 
-## Key Results (mean AUC-ROC across 10 folds)
-
-| Condition | Best Model | Unseen Reader | Unseen Text | Unseen Both |
-|-----------|-----------|:---:|:---:|:---:|
-| Random baseline | — | 0.505 | 0.507 | 0.514 |
-| text_only (linguistic) | RF | **0.638** | **0.562** | **0.595** |
-| combined_ling | LR | 0.584 | 0.570 | 0.578 |
-| combined (gaze) | LR | 0.540 | 0.542 | 0.547 |
-| early | LR | 0.527 | 0.535 | 0.545 |
-| late | LR | 0.520 | 0.527 | 0.505 |
-| Combined A+B+C (Exp 4) | LR | 0.543 | 0.540 | 0.513 |
-| BiGRU (Exp 4) | BiGRU | 0.519 | 0.519 | 0.469 |
-
-**H1** (late > early): weak, LR only — not supported.  
-**H2** (combined is best): not supported — text_only dominates.  
-**H3** (regression features most important): disproven — removing them slightly *increases* AUC.
-
----
-
 ## License
 
 MIT — see `LICENSE`.
